@@ -15,21 +15,20 @@ function Square({ value, onSquareClick }: SquareProps) {
 
 interface BoardProps {
   xIsNext: boolean;
-  squares: (string)[];
+  squares: string[];
   onPlay: (nextSquares: (string | null)[]) => void;
 }
 
-function Board({xIsNext, squares, onPlay}: BoardProps) {
-
+function Board({ xIsNext, squares, onPlay }: BoardProps) {
   function handleClick(i: number) {
-    if(squares[i] || calculateWinner(squares)){
+    if (squares[i] || calculateWinner(squares)) {
       return;
     }
 
     const nextSquares = squares.slice();
 
-    if(xIsNext){
-       nextSquares[i] = "X";
+    if (xIsNext) {
+      nextSquares[i] = "X";
     } else {
       nextSquares[i] = "O";
     }
@@ -40,7 +39,7 @@ function Board({xIsNext, squares, onPlay}: BoardProps) {
 
   let status;
 
-  if(winner){
+  if (winner) {
     status = "Winner: " + winner;
   } else {
     status = "Next player: " + (xIsNext ? "X" : "O");
@@ -73,21 +72,39 @@ export function Game() {
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const currentSquares = history[history.length - 1];
 
-  function handlePlay (nextSquares: any){
+  function handlePlay(nextSquares: any) {
     setHistory([...history, nextSquares]);
     setXIsNext(!xIsNext);
   }
-  
+
+  function jumpTo(nextMove: any) {
+    //TODO
+  }
+
+  const moves = history.map((squares, move) => {
+    let description;
+    if (move > 0) {
+      description = "Go to move #" + move;
+    } else {
+      description = "Go to game start";
+    }
+    return (
+      <li>
+        <button onClick={() => jumpTo(move)}>{description}</button>
+      </li>
+    );
+  });
+
   return (
     <div className="game">
       <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}  />
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
-        <ol>{}</ol>
+        <ol>{moves}</ol>
       </div>
     </div>
-  )
+  );
 }
 
 function calculateWinner(squares: string[]) {
